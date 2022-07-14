@@ -1,0 +1,17 @@
+galaxy_info:
+  role_name: ntp
+  author: Martin Kuba
+  description: Sets up time synchronization on Debian Linux using the package chrony.
+  company: CESNET
+  license: Apache
+  min_ansible_version: 2.12
+  platforms:
+   - name: Debian
+     versions:
+     - stretch
+     - buster
+     - bullseye
+  galaxy_tags:
+    - "system"
+    - "ntp"
+dependencies: []

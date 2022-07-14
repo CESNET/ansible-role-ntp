@@ -1,0 +1,24 @@
+- name: "Debian 9, 10 or 11 required"
+  assert:
+    that:
+      - ansible_distribution == "Debian"
+      - ansible_distribution_major_version in [ "9", "10", "11" ]
+    msg: "Only Debian 9, 10 and 11 is supported, this is {{ ansible_distribution }} {{ ansible_distribution_major_version }}"
+
+- name: "install package chrony"
+  apt:
+    name: chrony
+    state: present
+
+- name: "add ntp servers"
+  blockinfile:
+    path: /etc/chrony/chrony.conf
+    block: "{{ ntp_servers }}"
+    insertbefore: "pool 2.debian.pool.ntp.org iburst"
+  register: chronyconf
+
+- name: "restart chronyd"
+  when: chronyconf.changed
+  service:
+    name: chronyd
+    state: restarted
