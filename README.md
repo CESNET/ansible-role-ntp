@@ -17,7 +17,9 @@ server ntp.muni.cz iburst
 server tik.cesnet.cz iburst
 server tak.cesnet.cz iburst
 ```
-
+* **ntp_disable_default_pool**
+  * Default: `false`
+  * Should be `true` if the default pool should be disabled
 Examples of Playbooks
 ----------------
 
