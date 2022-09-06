@@ -10,11 +10,17 @@
     name: chrony
     state: present
 
+- name: "Enable/disable default pool"
+  lineinfile:
+    path: /etc/chrony/chrony.conf
+    search_string: 'pool 2.debian.pool.ntp.org iburst'
+    line: '{{ "#" if ntp_disable_default_pool  else ""  }}pool 2.debian.pool.ntp.org iburst'
+
 - name: "add ntp servers"
   blockinfile:
     path: /etc/chrony/chrony.conf
     block: "{{ ntp_servers }}"
-    insertbefore: "pool 2.debian.pool.ntp.org iburst"
+    insertbefore: "# Use Debian vendor zone."
   register: chronyconf
 
 - name: "restart chronyd"
