@@ -1,25 +1,28 @@
 # ansible-role-ntp
-Ansible role for setting up NTP time synchronization on Debian.
+Ansible role for setting up NTP time synchronization on Debian/Ubuntu.
 
 There are 3 packages for NTP in Debian: ntp, chrony and systemd-timesyncd.
 This role installs the package **chrony** which uninstalls ntp or systemd-timesyncd
 if any of them is already installed. 
 
-Then the file /etc/chrony/chrony.conf is edited to contain NTP server definitions
+Then the file /etc/chrony/sources.d/cesnet.sources is created to contain NTP server definitions
 specified in the variable ntp_servers.
 
 Role Variables
 --------------
 
-* **ntp_servers** - fragment of /etc/chrony/chrony.conf, default is 
+* **ntp_servers** - content of /etc/chrony/sources.d/cesnet.sources, default is 
 ```
-server ntp.muni.cz iburst
 server tik.cesnet.cz iburst
 server tak.cesnet.cz iburst
+server ntp1.cesnet.cz iburst
+server ts1.cesnet.cz iburst
+server ts2.cesnet.cz iburst
 ```
 * **ntp_disable_default_pool**
   * Default: `false`
-  * Should be `true` if the default pool should be disabled
+  * Should be `true` if the default Debian pool should be disabled
+
 Examples of Playbooks
 ----------------
 

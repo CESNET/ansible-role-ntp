@@ -1,31 +1,37 @@
 - name: "Debian/Ubuntu check"
   assert:
     that:
-      - ansible_distribution in ["Debian", "Ubuntu"]
+      - ansible_distribution in ["Debian", "Ubuntu", "Linux Mint"]
       - (ansible_distribution == "Debian" and ansible_distribution_major_version is version('10', '>=')) or
-        (ansible_distribution == "Ubuntu" and ansible_distribution_major_version is version('20', '>='))
+        (ansible_distribution == "Ubuntu" and ansible_distribution_major_version is version('20', '>=')) or
+        (ansible_distribution == "Linux Mint" and ansible_distribution_major_version is version('21', '>='))
     msg: "Required Debian version is 10 or Ubuntu version is 20. This is {{ ansible_distribution }} {{ ansible_distribution_major_version }}"
     quiet: true
 
-- name: "Install package chrony"
+- name: "install package chrony"
   apt:
     name: chrony
     state: present
 
-- name: "Enable/disable default pool"
+- name: "enable/disable default Debian pool"
+  when: ansible_distribution == "Debian"
   lineinfile:
     path: /etc/chrony/chrony.conf
     search_string: 'pool 2.debian.pool.ntp.org iburst'
     line: '{{ "#" if ntp_disable_default_pool  else ""  }}pool 2.debian.pool.ntp.org iburst'
 
-- name: "Add ntp servers"
+- name: "clean up older config"
   blockinfile:
     path: /etc/chrony/chrony.conf
-    block: "{{ ntp_servers }}"
-    insertbefore: "# Use Debian vendor zone."
+    state: absent
+
+- name: "add ntp servers"
+  copy:
+    dest: /etc/chrony/sources.d/cesnet.sources
+    content: "{{ ntp_servers }}"
   register: chronyconf
 
-- name: "Restart chronyd"
+- name: "restart chronyd"
   when: chronyconf.changed
   service:
     name: chronyd

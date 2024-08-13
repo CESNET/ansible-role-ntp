@@ -3,6 +3,9 @@ ntp_disable_default_pool: false
 
 # fragment of crony.conf file with NTP servers
 ntp_servers: |2
-  server ntp.muni.cz iburst
   server tik.cesnet.cz iburst
   server tak.cesnet.cz iburst
+  server ntp1.cesnet.cz iburst
+  server ts1.cesnet.cz iburst
+  server ts2.cesnet.cz iburst
+
