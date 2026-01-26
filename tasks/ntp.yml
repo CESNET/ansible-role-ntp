@@ -1,11 +1,11 @@
 - name: "Debian/Ubuntu check"
   assert:
     that:
-      - ansible_distribution in ["Debian", "Ubuntu", "Linux Mint"]
-      - (ansible_distribution == "Debian" and ansible_distribution_major_version is version('10', '>=')) or
-        (ansible_distribution == "Ubuntu" and ansible_distribution_major_version is version('20', '>=')) or
-        (ansible_distribution == "Linux Mint" and ansible_distribution_major_version is version('21', '>='))
-    msg: "Required Debian version is 10 or Ubuntu version is 20. This is {{ ansible_distribution }} {{ ansible_distribution_major_version }}"
+      - ansible_facts['distribution'] in ["Debian", "Ubuntu", "Linux Mint"]
+      - (ansible_facts['distribution'] == "Debian" and ansible_facts['distribution_major_version'] is version('10', '>=')) or
+        (ansible_facts['distribution'] == "Ubuntu" and ansible_facts['distribution_major_version'] is version('20', '>=')) or
+        (ansible_facts['distribution'] == "Linux Mint" and ansible_facts['distribution_major_version'] is version('21', '>='))
+    fail_msg: "Required Debian version is 10 or Ubuntu version is 20. This is {{ ansible_facts['distribution'] }} {{ ansible_facts['distribution_major_version'] }}"
     quiet: true
 
 - name: "install package chrony"
@@ -14,7 +14,7 @@
     state: present
 
 - name: "enable/disable default Debian pool"
-  when: ansible_distribution == "Debian"
+  when: ansible_facts['distribution'] == "Debian"
   lineinfile:
     path: /etc/chrony/chrony.conf
     search_string: 'pool 2.debian.pool.ntp.org iburst'
@@ -33,7 +33,7 @@
 
 - name: "restart chronyd"
   when: chronyconf.changed
-  service:
+  ansible.builtin.service:
     name: chronyd
     state: restarted
 
