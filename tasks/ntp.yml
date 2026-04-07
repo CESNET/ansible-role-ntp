@@ -19,6 +19,7 @@
     path: /etc/chrony/chrony.conf
     search_string: 'pool 2.debian.pool.ntp.org iburst'
     line: '{{ "#" if ntp_disable_default_pool  else ""  }}pool 2.debian.pool.ntp.org iburst'
+  register: chrony_defaultpool_conf
 
 - name: "clean up older config"
   blockinfile:
@@ -32,7 +33,7 @@
   register: chronyconf
 
 - name: "restart chronyd"
-  when: chronyconf.changed
+  when: chronyconf.changed or chrony_defaultpool_conf.changed
   ansible.builtin.service:
     name: chronyd
     state: restarted
